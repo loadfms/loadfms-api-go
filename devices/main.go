@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/loadfms/controllers"
-	"github.com/loadfms/utils"
+	"github.com/loadfms/devices/controllers"
+	"github.com/loadfms/devices/utils"
 )
 
 func main() {

@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/loadfms/models"
-	"github.com/loadfms/utils"
+	"github.com/loadfms/devices/models"
+	"github.com/loadfms/devices/utils"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
