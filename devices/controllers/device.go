@@ -61,7 +61,13 @@ func (deviceController DeviceController) DeviceByPort() func(w http.ResponseWrit
 			return
 		}
 
-		respBody, err := json.MarshalIndent(device, "", "  ")
+		answer := "turnoff"
+
+		if device.State == 1 {
+			answer = "turnon"
+		}
+
+		respBody, err := json.MarshalIndent(answer, "", "  ")
 		if err != nil {
 			log.Fatal(err)
 		}
