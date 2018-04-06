@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -20,4 +21,5 @@ func main() {
 	mux.HandleFunc("/devices/{port}", deviceController.DeviceByPort()).Methods("GET")
 
 	http.ListenAndServe("localhost:8080", mux)
+	log.Println("Server on port:8080")
 }
