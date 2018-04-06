@@ -20,6 +20,6 @@ func main() {
 	mux.HandleFunc("/devices/{name}/{state}", deviceController.UpdateState()).Methods("PUT")
 	mux.HandleFunc("/devices/{port}", deviceController.DeviceByPort()).Methods("GET")
 
-	http.ListenAndServe("localhost:8080", mux)
+	http.ListenAndServe(":8080", mux)
 	log.Println("Server on port:8080")
 }
