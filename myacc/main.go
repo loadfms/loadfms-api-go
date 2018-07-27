@@ -10,16 +10,12 @@ import (
 )
 
 func main() {
-	session := utils.GetMysqlSession()
+	session := utils.GetSession()
 	healthController := controllers.NewHealthController(session)
-	categoryController := controllers.NewCategoryController(session)
 	statementController := controllers.NewStatementController(session)
 
 	mux := mux.NewRouter()
 	mux.HandleFunc("/api/myacc/health", healthController.Check()).Methods("GET")
-
-	mux.HandleFunc("/api/myacc/category", categoryController.All()).Methods("GET")
-	mux.HandleFunc("/api/myacc/category", categoryController.Add()).Methods("POST")
 
 	mux.HandleFunc("/api/myacc/statement", statementController.All()).Methods("GET")
 	mux.HandleFunc("/api/myacc/statement", statementController.Add()).Methods("POST")
