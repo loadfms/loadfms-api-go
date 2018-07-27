@@ -7,9 +7,12 @@ import (
 
 	"github.com/loadfms/common/utils"
 	"github.com/loadfms/myacc/models"
-	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+const DB = "myacc"
+const COLLECTION = "statement"
 
 type StatementController struct {
 	session *mgo.Session
@@ -21,13 +24,12 @@ func NewStatementController(session *mgo.Session) *StatementController {
 
 func (statementController StatementController) All() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		c := statementController.session.DB("myacc").C("statement")
+		c := statementController.session.DB(DB).C(COLLECTION)
 
 		var items []models.Statement
 		err := c.Find(bson.M{}).All(&items)
 		if err != nil {
 			utils.LogError(err)
-			log.Println("Failed get all statements: ", err)
 			return
 		}
 
@@ -50,15 +52,33 @@ func (statementController StatementController) Add() func(w http.ResponseWriter,
 			return
 		}
 
-		c := statementController.session.DB("myacc").C("statement")
-
-		err = c.Insert(item)
-		if err != nil {
-			utils.LogError(err)
-			return
-		}
-
+		c := statementController.session.DB(DB).C(COLLECTION)
+		result := statementController.checkDuplicate(item, c)
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
+
+		if !result {
+			err = c.Insert(item)
+			if err != nil {
+				utils.LogError(err)
+				return
+			}
+
+			w.WriteHeader(http.StatusCreated)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 	}
+}
+
+func (statementController StatementController) checkDuplicate(item models.Statement, c *mgo.Collection) bool {
+
+	var items []models.Statement
+	err := c.Find(bson.M{"description": item.Description, "date": item.Date, "value": item.Value}).All(&items)
+	if err != nil {
+		utils.LogError(err)
+	}
+	if len(items) > 0 {
+		return true
+	}
+	return false
 }
